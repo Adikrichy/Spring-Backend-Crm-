@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  app:
+    image: spring-boot-crm/sb
+    container_name: app
+    build: .
+    ports:
+      - '8080:8080'
+    expose:
+      - '8080'
+    networks:
+      - app
+  db:
+    image: mysql/mysql-server:8.0
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'app'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: ''
+      MYSQL_ROOT_PASSWORD: ''
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    networks:
+      - app
+    volumes:
+      - my-db:/var/lib/mysql
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    restart: unless-stopped
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+networks:
+  app:
+    driver: bridge
+volumes:
+  my-db:
+    driver: local
